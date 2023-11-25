@@ -156,7 +156,7 @@ public class BtBase {
     // ============================================通知UI===========================================================
     private boolean checkSend() {
         if (isSending) {
-            APP.toast("正在发送其它数据,请稍后再发...", 0);
+            APP.getInstance().toast("正在发送其它数据,请稍后再发...", 0);
             return true;
         }
         return false;

@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 
@@ -52,11 +53,11 @@ public class BtClientActivity extends Activity implements BtBase.Listener, BtRec
     @Override
     public void onItemClick(BluetoothDevice dev) {
         if (mClient.isConnected(dev)) {
-            APP.toast("已经连接了", 0);
+            APP.getInstance().toast("已经连接了", 0);
             return;
         }
         mClient.connect(dev);
-        APP.toast("正在连接...", 0);
+        APP.getInstance().toast("正在连接...", 0);
         mTips.setText("正在连接...");
     }
 
@@ -74,22 +75,22 @@ public class BtClientActivity extends Activity implements BtBase.Listener, BtRec
         if (mClient.isConnected(null)) {
             String msg = mInputMsg.getText().toString();
             if (TextUtils.isEmpty(msg))
-                APP.toast("消息不能空", 0);
+                APP.getInstance().toast("消息不能空", 0);
             else
                 mClient.sendMsg(msg);
         } else
-            APP.toast("没有连接", 0);
+            APP.getInstance().toast("没有连接", 0);
     }
 
     public void sendFile(View view) {
         if (mClient.isConnected(null)) {
             String filePath = mInputFile.getText().toString();
             if (TextUtils.isEmpty(filePath) || !new File(filePath).isFile())
-                APP.toast("文件无效", 0);
+                APP.getInstance().toast("文件无效", 0);
             else
                 mClient.sendFile(filePath);
         } else
-            APP.toast("没有连接", 0);
+            APP.getInstance().toast("没有连接", 0);
     }
 
     @Override
@@ -112,6 +113,6 @@ public class BtClientActivity extends Activity implements BtBase.Listener, BtRec
                 mLogs.append(msg);
                 break;
         }
-        APP.toast(msg, 0);
+        APP.getInstance().toast(msg, 0);
     }
 }

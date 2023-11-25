@@ -7,6 +7,9 @@
     <string name="bt">经典蓝牙(BT)</string>
     <string name="ble">低功耗蓝牙(BLE)</string>
     <string name="reScan">重新扫描</string>
+    <string name="scanning">正在扫描..</string>
+    <string name="scan_finish">扫描完成</string>
+    <string name="disconnect">断开</string>
     <string name="read">读取</string>
     <string name="setNotify">设置通知</string>
     <string name="max_byte">最多20字节</string>

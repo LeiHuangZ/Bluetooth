@@ -41,29 +41,34 @@ public class BtServerActivity extends Activity implements BtBase.Listener {
     public void sendMsg(View view) {
         if (mServer.isConnected(null)) {
             String msg = mInputMsg.getText().toString();
-            if (TextUtils.isEmpty(msg))
-                APP.toast("消息不能空", 0);
-            else
+            if (TextUtils.isEmpty(msg)) {
+                APP.getInstance().toast("消息不能空", 0);
+            } else {
                 mServer.sendMsg(msg);
-        } else
-            APP.toast("没有连接", 0);
+            }
+        } else {
+            APP.getInstance().toast("没有连接", 0);
+        }
     }
 
     public void sendFile(View view) {
         if (mServer.isConnected(null)) {
             String filePath = mInputFile.getText().toString();
-            if (TextUtils.isEmpty(filePath) || !new File(filePath).isFile())
-                APP.toast("文件无效", 0);
-            else
+            if (TextUtils.isEmpty(filePath) || !new File(filePath).isFile()) {
+                APP.getInstance().toast("文件无效", 0);
+            } else {
                 mServer.sendFile(filePath);
-        } else
-            APP.toast("没有连接", 0);
+            }
+        } else {
+            APP.getInstance().toast("没有连接", 0);
+        }
     }
 
     @Override
     public void socketNotify(int state, final Object obj) {
-        if (isDestroyed())
+        if (isDestroyed()) {
             return;
+        }
         String msg = null;
         switch (state) {
             case BtBase.Listener.CONNECTED:
@@ -80,7 +85,9 @@ public class BtServerActivity extends Activity implements BtBase.Listener {
                 msg = String.format("\n%s", obj);
                 mLogs.append(msg);
                 break;
+            default:
+                break;
         }
-        APP.toast(msg, 0);
+        APP.getInstance().toast(msg, 0);
     }
 }

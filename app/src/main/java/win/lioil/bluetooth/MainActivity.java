@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+
+import androidx.core.app.ActivityCompat;
 
 import win.lioil.bluetooth.ble.BleClientActivity;
 import win.lioil.bluetooth.ble.BleServerActivity;
@@ -20,11 +23,16 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        }
 
         // 检查蓝牙开关
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) {
-            APP.toast("本机没有找到蓝牙硬件或驱动！", 0);
+            APP.getInstance().toast("本机没有找到蓝牙硬件或驱动！", 0);
             finish();
             return;
         } else {
@@ -38,7 +46,7 @@ public class MainActivity extends Activity {
 
         // 检查是否支持BLE蓝牙
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            APP.toast("本机不支持低功耗蓝牙！", 0);
+            APP.getInstance().toast("本机不支持低功耗蓝牙！", 0);
             finish();
             return;
         }

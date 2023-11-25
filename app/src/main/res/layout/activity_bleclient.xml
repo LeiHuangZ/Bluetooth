@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,19 +9,48 @@
 
     <Button
         android:id="@+id/btn_scan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:onClick="reScan"
-        android:text="@string/reScan" />
+        android:text="@string/reScan"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5" />
 
-    <android.support.v7.widget.RecyclerView
+    <Button
+        android:id="@+id/btn_ex"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="ex"
+        android:text="导出"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintStart_toEndOf="@+id/btn_scan"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="0"
+        android:textSize="18sp"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintTop_toBottomOf="@+id/btn_scan"
+        tools:layout_editor_absoluteX="2dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_ble"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/stroke"
         android:padding="4dp"
-        app:layout_constraintHeight_percent="0.4"
-        app:layout_constraintTop_toBottomOf="@+id/btn_scan" />
+        app:layout_constraintHeight_percent="0.80"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:layout_editor_absoluteX="2dp" />
 
     <Button
         android:id="@+id/btn_read"
@@ -29,6 +58,18 @@
         android:layout_height="wrap_content"
         android:onClick="read"
         android:text="@string/read"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/btn_notify"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_ble" />
+
+    <Button
+        android:id="@+id/btn_disconnect"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="disconnect"
+        android:text="@string/disconnect"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/btn_notify"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rv_ble" />
@@ -39,8 +80,9 @@
         android:layout_height="wrap_content"
         android:onClick="setNotify"
         android:text="@string/setNotify"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_read"
+        app:layout_constraintStart_toEndOf="@+id/btn_disconnect"
         app:layout_constraintTop_toBottomOf="@+id/rv_ble" />
 
     <EditText
@@ -49,10 +91,11 @@
         android:layout_height="wrap_content"
         android:hint="@string/max_byte"
         android:inputType="none"
-        android:maxLength="20"
+        android:text="FF00031D0C"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/btn_write"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_read" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_disconnect" />
 
     <Button
         android:id="@+id/btn_write"
@@ -60,24 +103,22 @@
         android:layout_height="wrap_content"
         android:onClick="write"
         android:text="@string/write"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/et_write"
         app:layout_constraintTop_toBottomOf="@+id/btn_notify" />
 
-    <ScrollView
+    <TextView
+        android:id="@+id/tv_tips"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/stroke"
         android:padding="2dp"
-        android:scrollbars="none"
+        android:scrollbarFadeDuration="2000"
+        android:scrollbars="vertical"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_write">
-
-        <TextView
-            android:id="@+id/tv_tips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
-</android.support.constraint.ConstraintLayout>
+        app:layout_constraintTop_toBottomOf="@+id/btn_write" />
+</androidx.constraintlayout.widget.ConstraintLayout>

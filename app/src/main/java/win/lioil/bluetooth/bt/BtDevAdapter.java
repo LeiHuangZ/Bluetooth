@@ -2,13 +2,14 @@ package win.lioil.bluetooth.bt;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,9 @@ public class BtDevAdapter extends RecyclerView.Adapter<BtDevAdapter.VH> {
 
     private void addBound() {
         Set<BluetoothDevice> bondedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
-        if (bondedDevices != null)
+        if (bondedDevices != null) {
             mDevices.addAll(bondedDevices);
+        }
     }
 
     @NonNull
@@ -55,8 +57,9 @@ public class BtDevAdapter extends RecyclerView.Adapter<BtDevAdapter.VH> {
     }
 
     public void add(BluetoothDevice dev) {
-        if (mDevices.contains(dev))
+        if (mDevices.contains(dev)) {
             return;
+        }
         mDevices.add(dev);
         notifyDataSetChanged();
     }
@@ -65,8 +68,9 @@ public class BtDevAdapter extends RecyclerView.Adapter<BtDevAdapter.VH> {
         mDevices.clear();
         addBound();
         BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
-        if (!bt.isDiscovering())
+        if (!bt.isDiscovering()) {
             bt.startDiscovery();
+        }
         notifyDataSetChanged();
     }
 
@@ -85,8 +89,9 @@ public class BtDevAdapter extends RecyclerView.Adapter<BtDevAdapter.VH> {
         public void onClick(View v) {
             int pos = getAdapterPosition();
             Log.d(TAG, "onClick, getAdapterPosition=" + pos);
-            if (pos >= 0 && pos < mDevices.size())
+            if (pos >= 0 && pos < mDevices.size()) {
                 mListener.onItemClick(mDevices.get(pos));
+            }
         }
     }
 
