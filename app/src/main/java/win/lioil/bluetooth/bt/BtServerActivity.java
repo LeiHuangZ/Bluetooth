@@ -1,7 +1,9 @@
 package win.lioil.bluetooth.bt;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -29,6 +31,7 @@ public class BtServerActivity extends Activity implements BtBase.Listener {
         mInputFile = findViewById(R.id.input_file);
         mLogs = findViewById(R.id.tv_log);
         mServer = new BtServer(this);
+        setDiscoverableTimeout();
     }
 
     @Override
@@ -82,5 +85,16 @@ public class BtServerActivity extends Activity implements BtBase.Listener {
                 break;
         }
         APP.toast(msg, 0);
+    }
+
+    /**
+     * 打开蓝牙的可见性
+     */
+    public void setDiscoverableTimeout() {
+        //启动修改蓝牙可见性的Intent
+        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        //设置蓝牙可见性的时间，方法本身规定最多可见300秒
+        intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        startActivity(intent);
     }
 }
