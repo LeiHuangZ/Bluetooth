@@ -18,6 +18,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Layout;
@@ -33,8 +34,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -77,6 +80,25 @@ public class BleClientActivity extends Activity {
     private BleDevAdapter mBleDevAdapter;
     private BluetoothGatt mBluetoothGatt;
     private boolean isConnected = false;
+
+    //1、首先声明一个数组permissions，将所有需要申请的权限都放在里面
+    private final String[] permissions = new String[]{Manifest.permission.BLUETOOTH_ADVERTISE,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private final String[] permission = new String[]{
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private final int mRequestCode = 0x10;//权限请求码
 
     // 与服务端连接的Callback
     public BluetoothGattCallback mBluetoothGattCallback = new BluetoothGattCallback() {
@@ -233,6 +255,11 @@ public class BleClientActivity extends Activity {
         binding = ActivityBleclientBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        checkPermission();
+    }
+
+    private void init() {
+
         showConnectLayout();
 
         DaoSession daoSession = DBManager.getInstance(BleClientActivity.this).getWriteDaoSession();
@@ -295,6 +322,8 @@ public class BleClientActivity extends Activity {
             @Override
             public boolean onLongClick(View v) {
                 showBtNameSetting();
+                mBleDevAdapter.stopScanBle();
+                closeConn();
                 return false;
             }
         });
@@ -319,16 +348,15 @@ public class BleClientActivity extends Activity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        checkPermission();
+    protected void onStop() {
+        super.onStop();
+        mBleDevAdapter.stopScanBle();
+        closeConn();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mBleDevAdapter.stopScanBle();
-        closeConn();
     }
 
     // BLE中心设备连接外围设备的数量有限(大概2~7个)，在建立新连接之前必须释放旧连接资源，否则容易出现连接错误133
@@ -453,11 +481,61 @@ public class BleClientActivity extends Activity {
      * @return true 不满足；false 满足
      */
     private void checkPermission() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                APP.getInstance().toast("缺少BLUETOOTH_CONNECT权限", Toast.LENGTH_SHORT);
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 12580);
+        List<String> mPermissionList = new ArrayList<>();
+        //逐个判断是否还有未通过的权限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            for (String permission : permissions) {
+                if (ContextCompat.checkSelfPermission(this, permission) !=
+                        PackageManager.PERMISSION_GRANTED) {
+                    mPermissionList.add(permission);//添加还未授予的权限到mPermissionList中
+                }
             }
+            //申请权限
+            if (!mPermissionList.isEmpty()) {//有权限没有通过，需要申请
+                ActivityCompat.requestPermissions(this, permissions, mRequestCode);
+            } else {
+                init();
+            }
+        } else {
+            for (String permission : permission) {
+                if (ContextCompat.checkSelfPermission(this, permission) !=
+                        PackageManager.PERMISSION_GRANTED) {
+                    mPermissionList.add(permission);//添加还未授予的权限到mPermissionList中
+                }
+            }
+            //申请权限
+            if (!mPermissionList.isEmpty()) {//有权限没有通过，需要申请
+                ActivityCompat.requestPermissions(this, permission, mRequestCode);
+            } else {
+                init();
+            }
+        }
+    }
+
+    /**
+     * 5.请求权限后回调的方法
+     * @param requestCode 是我们自己定义的权限请求码
+     * @param permissions 是我们请求的权限名称数组
+     * @param grantResults 是我们在弹出页面后是否允许权限的标识数组，数组的长度对应的是权限
+     *                     名称数组的长度，数组的数据0表示允许权限，-1表示我们点击了禁止权限
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean hasPermissionDismiss = false;//有权限没有通过
+        if (mRequestCode == requestCode) {
+            for (int grantResult : grantResults) {
+                if (grantResult == -1) {
+                    hasPermissionDismiss = true;
+                    break;
+                }
+            }
+        }
+        if (hasPermissionDismiss) {//如果有没有被允许的权限
+            checkPermission();
+        } else if (permissions.length > 0){
+            init();
         }
     }
 
