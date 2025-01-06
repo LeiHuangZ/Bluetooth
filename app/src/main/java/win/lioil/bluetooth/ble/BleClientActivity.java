@@ -10,7 +10,9 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -19,13 +21,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Layout;
+import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -285,6 +290,32 @@ public class BleClientActivity extends Activity {
 
         binding.rvBle.setAdapter(mBleDevAdapter);
         binding.tvTips.setMovementMethod(ScrollingMovementMethod.getInstance());
+
+        binding.btnScan.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showBtNameSetting();
+                return false;
+            }
+        });
+    }
+
+    private void showBtNameSetting() {
+        SharedPreferences sp = getSharedPreferences("bluetooth", MODE_PRIVATE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        EditText et = new EditText(this);
+        String btName = sp.getString("bt_name", "RFID-reader");
+        et.setText(btName);
+        builder.setView(et)
+                .setPositiveButton("确定", (dialog, which) -> {
+                    String string = et.getText().toString();
+                    if (TextUtils.isEmpty(string)) {
+                        return;
+                    }
+                    sp.edit().putString("bt_name", string).apply();
+                })
+                .setNegativeButton("取消", null);
+        builder.show();
     }
 
     @Override

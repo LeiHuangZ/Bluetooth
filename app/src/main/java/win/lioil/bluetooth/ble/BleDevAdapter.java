@@ -1,5 +1,7 @@
 package win.lioil.bluetooth.ble;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -8,6 +10,7 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,6 +38,7 @@ public class BleDevAdapter extends RecyclerView.Adapter<BleDevAdapter.ViewHolder
     private static final String TAG = BleDevAdapter.class.getSimpleName();
     private final Listener mListener;
     private final List<BleDev> mDevices = new ArrayList<>();
+    private final SharedPreferences sp;
     public volatile boolean isScanning;
     private final Context context;
     private BtMacDaoDao btMacDaoDao;
@@ -47,7 +51,8 @@ public class BleDevAdapter extends RecyclerView.Adapter<BleDevAdapter.ViewHolder
         public void onScanResult(int callbackType, ScanResult result) {
             BleDev dev = new BleDev(result.getDevice(), result);
             // 过滤Name为null的Ble设备
-            if (TextUtils.isEmpty(dev.getName()) || !dev.getName().contains("RFID-reader")) {
+            String btName = sp.getString("bt_name", "RFID-reader");
+            if (TextUtils.isEmpty(dev.getName()) || !dev.getName().contains(btName)) {
                 return;
             }
             if (!mDevices.contains(dev)) {
@@ -88,6 +93,7 @@ public class BleDevAdapter extends RecyclerView.Adapter<BleDevAdapter.ViewHolder
         this.btMacDaoDao = btMacDaoDao;
         this.context = context;
         mListener = listener;
+        sp = this.context.getSharedPreferences("bluetooth", MODE_PRIVATE);
         scanBle();
     }
 

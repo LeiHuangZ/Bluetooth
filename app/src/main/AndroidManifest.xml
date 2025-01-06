@@ -47,8 +47,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".ble.BleClientActivity"
-            android:label="@string/ble_client" >
+            android:name=".ble.BleClientActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

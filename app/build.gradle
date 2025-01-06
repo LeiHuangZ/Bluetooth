@@ -7,14 +7,26 @@ android {
         applicationId "win.lioil.bluetooth"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 2
-        versionName "1.2"
+        versionCode 3
+        versionName "1.3"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
+
+    signingConfigs {
+        release {
+            keyAlias 'key0'
+            keyPassword 'android'
+            storeFile file("C:\\Users\\LeiHuang\\Documents\\License\\LeiHuang_Free.jks")
+            storePassword 'android'
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            shrinkResources true
+            signingConfig signingConfigs.release
         }
     }
 
@@ -27,6 +39,10 @@ android {
         variant.outputs.all {
             outputFileName = "lioil.bluetooth_${variant.buildType.name}_v${defaultConfig.versionName}.apk"
         }
+    }
+
+    lint {
+        baseline = file("lint-baseline.xml")
     }
 }
 

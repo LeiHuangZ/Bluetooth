@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bluetooth</string>
+    <string name="app_name">蓝牙地址</string>
     <string name="bt_client">BT客户端</string>
     <string name="bt_server">BT服务端</string>
     <string name="ble_client">BLE客户端(主机/中心设备/Central)</string>
